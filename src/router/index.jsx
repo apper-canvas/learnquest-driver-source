@@ -7,6 +7,7 @@ const ChallengePage = lazy(() => import("@/components/pages/ChallengePage"));
 const Progress = lazy(() => import("@/components/pages/Progress"));
 const AvatarCustomization = lazy(() => import("@/components/pages/AvatarCustomization"));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
+const ContactUs = lazy(() => import("@/components/pages/ContactUs"));
 
 const suspenseFallback = (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -58,6 +59,14 @@ const mainRoutes = [
     element: (
       <Suspense fallback={suspenseFallback}>
         <AvatarCustomization />
+      </Suspense>
+    )
+},
+  {
+    path: "contact",
+    element: (
+      <Suspense fallback={suspenseFallback}>
+        <ContactUs />
       </Suspense>
     )
   },
