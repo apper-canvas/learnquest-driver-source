@@ -34,15 +34,15 @@ const data = await progressService.getCurrentProgress();
   if (error) return <Error message={error} onRetry={loadProgress} />;
 
 const getMathStars = () => {
-    return Math.floor((progress.total_stars_c || 0) * 0.55);
+    return Math.floor((progress?.total_stars_c || 0) * 0.55);
   };
 
-  const getReadingStars = () => {
-    return Math.floor((progress.total_stars_c || 0) * 0.45);
+const getReadingStars = () => {
+    return Math.floor((progress?.total_stars_c || 0) * 0.45);
   };
 
-  const getSkillsMasteredCount = () => {
-    if (!progress.skills_mastered_c) return 0;
+const getSkillsMasteredCount = () => {
+    if (!progress?.skills_mastered_c) return 0;
     return typeof progress.skills_mastered_c === 'string' 
       ? progress.skills_mastered_c.split(',').filter(s => s.trim()).length
       : Array.isArray(progress.skills_mastered_c) 
@@ -50,8 +50,8 @@ const getMathStars = () => {
       : 0;
   };
 
-  const getSkillsMastered = () => {
-    if (!progress.skills_mastered_c) return [];
+const getSkillsMastered = () => {
+    if (!progress?.skills_mastered_c) return [];
     return typeof progress.skills_mastered_c === 'string' 
       ? progress.skills_mastered_c.split(',').filter(s => s.trim())
       : Array.isArray(progress.skills_mastered_c) 
@@ -110,7 +110,7 @@ const getMathStars = () => {
               subject="math"
               icon="Calculator"
               color="primary"
-currentLevel={progress.math_level_c || 1}
+currentLevel={progress?.math_level_c || 1}
               totalStars={getMathStars()}
               description="Practice addition, subtraction, multiplication, and division!"
             />
@@ -124,7 +124,7 @@ currentLevel={progress.math_level_c || 1}
               subject="reading"
               icon="BookOpen"
               color="secondary"
-currentLevel={progress.reading_level_c || 1}
+currentLevel={progress?.reading_level_c || 1}
               totalStars={getReadingStars()}
               description="Build vocabulary, sentences, and reading comprehension!"
             />
