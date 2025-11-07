@@ -80,11 +80,11 @@ const getSkillsMastered = () => {
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <Badge variant="success">
                   <ApperIcon name="Flame" size={16} className="mr-1" />
-{progress.streak_c || 0} Day Streak
+{progress?.streak_c || 0} Day Streak
                 </Badge>
                 <Badge variant="accent">
                   <ApperIcon name="Star" size={16} className="mr-1" fill="currentColor" />
-                  {progress.total_stars_c || 0} Total Stars
+{progress?.total_stars_c || 0} Total Stars
                 </Badge>
                 <Badge variant="info">
                   <ApperIcon name="Award" size={16} className="mr-1" />
