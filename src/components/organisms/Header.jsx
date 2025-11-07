@@ -1,11 +1,14 @@
 import { motion } from "framer-motion";
-import { useNavigate, useLocation, useOutletContext } from "react-router-dom";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
+import { useAuth } from "@/layouts/Root";
+import React from "react";
 import ApperIcon from "@/components/ApperIcon";
-import Badge from "@/components/atoms/Badge";
+import { cn } from "@/utils/cn";
 
-const Header = () => {
+export default function Header() {
   const context = useOutletContext();
   const totalStars = context?.totalStars ?? 0;
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const isHome = location.pathname === "/";
@@ -65,13 +68,24 @@ const Header = () => {
             />
           </nav>
 
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full"
-          >
-            <ApperIcon name="Star" size={24} fill="currentColor" className="text-accent" />
-            <span className="text-xl font-display">{totalStars}</span>
-          </motion.div>
+<div className="flex items-center gap-4">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full"
+            >
+              <ApperIcon name="Star" size={24} fill="currentColor" className="text-accent" />
+              <span className="text-xl font-display">{totalStars}</span>
+            </motion.div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={logout}
+              className="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full hover:bg-white/30 transition-colors"
+            >
+              <ApperIcon name="LogOut" size={20} />
+              <span className="hidden sm:inline text-sm font-medium">Logout</span>
+            </motion.button>
+          </div>
         </div>
 
         <div className="md:hidden pb-4">
@@ -116,9 +130,6 @@ const MobileNavItem = ({ label, icon, onClick, active }) => (
       <ApperIcon name={icon} size={24} />
     </div>
     <span className="text-xs font-semibold">{label}</span>
+<span className="text-xs font-semibold">{label}</span>
   </motion.button>
 );
-
-const cn = (...classes) => classes.filter(Boolean).join(" ");
-
-export default Header;

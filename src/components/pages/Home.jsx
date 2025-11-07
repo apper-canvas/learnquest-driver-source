@@ -17,7 +17,7 @@ const Home = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await progressService.getCurrentProgress();
+const data = await progressService.getCurrentProgress();
       setProgress(data);
     } catch (err) {
       setError(err.message || "Failed to load progress");
@@ -33,12 +33,30 @@ const Home = () => {
   if (loading) return <Loading message="Loading your adventure..." />;
   if (error) return <Error message={error} onRetry={loadProgress} />;
 
-  const getMathStars = () => {
-    return Math.floor(progress.totalStars * 0.55);
+const getMathStars = () => {
+    return Math.floor((progress.total_stars_c || 0) * 0.55);
   };
 
   const getReadingStars = () => {
-    return Math.floor(progress.totalStars * 0.45);
+    return Math.floor((progress.total_stars_c || 0) * 0.45);
+  };
+
+  const getSkillsMasteredCount = () => {
+    if (!progress.skills_mastered_c) return 0;
+    return typeof progress.skills_mastered_c === 'string' 
+      ? progress.skills_mastered_c.split(',').filter(s => s.trim()).length
+      : Array.isArray(progress.skills_mastered_c) 
+      ? progress.skills_mastered_c.length 
+      : 0;
+  };
+
+  const getSkillsMastered = () => {
+    if (!progress.skills_mastered_c) return [];
+    return typeof progress.skills_mastered_c === 'string' 
+      ? progress.skills_mastered_c.split(',').filter(s => s.trim())
+      : Array.isArray(progress.skills_mastered_c) 
+      ? progress.skills_mastered_c 
+      : [];
   };
 
   return (
@@ -62,15 +80,15 @@ const Home = () => {
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <Badge variant="success">
                   <ApperIcon name="Flame" size={16} className="mr-1" />
-                  {progress.streak} Day Streak
+{progress.streak_c || 0} Day Streak
                 </Badge>
                 <Badge variant="accent">
                   <ApperIcon name="Star" size={16} className="mr-1" fill="currentColor" />
-                  {progress.totalStars} Total Stars
+                  {progress.total_stars_c || 0} Total Stars
                 </Badge>
                 <Badge variant="info">
                   <ApperIcon name="Award" size={16} className="mr-1" />
-                  {progress.skillsMastered.length} Skills Mastered
+                  {getSkillsMasteredCount()} Skills Mastered
                 </Badge>
               </div>
             </div>
@@ -92,7 +110,7 @@ const Home = () => {
               subject="math"
               icon="Calculator"
               color="primary"
-              currentLevel={progress.mathLevel}
+currentLevel={progress.math_level_c || 1}
               totalStars={getMathStars()}
               description="Practice addition, subtraction, multiplication, and division!"
             />
@@ -106,7 +124,7 @@ const Home = () => {
               subject="reading"
               icon="BookOpen"
               color="secondary"
-              currentLevel={progress.readingLevel}
+currentLevel={progress.reading_level_c || 1}
               totalStars={getReadingStars()}
               description="Build vocabulary, sentences, and reading comprehension!"
             />
@@ -132,7 +150,7 @@ const Home = () => {
                 Keep up the amazing work! Every challenge helps you learn and grow.
               </p>
               <div className="flex flex-wrap gap-4">
-                {progress.skillsMastered.slice(0, 3).map((skill, index) => (
+{getSkillsMastered().slice(0, 3).map((skill, index) => (
                   <Badge key={index} variant="success">
                     <ApperIcon name="CheckCircle" size={16} className="mr-1" />
                     {skill}

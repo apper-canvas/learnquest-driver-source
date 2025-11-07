@@ -1,36 +1,179 @@
-import challengesData from "../mockData/challenges.json";
-
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+import { getApperClient } from '@/services/apperClient';
+import { toast } from 'react-toastify';
 
 const challengeService = {
   getAll: async () => {
-    await delay(300);
-    return [...challengesData];
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        console.error("ApperClient not available");
+        return [];
+      }
+
+      const params = {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "correct_answer_c"}},
+          {"field": {"Name": "difficulty_c"}},
+          {"field": {"Name": "points_c"}},
+          {"field": {"Name": "question_c"}},
+          {"field": {"Name": "skill_c"}},
+          {"field": {"Name": "type_c"}}
+        ]
+      };
+
+      const response = await apperClient.fetchRecords('challenge_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching challenges:", error?.response?.data?.message || error);
+      return [];
+    }
   },
 
   getById: async (id) => {
-    await delay(200);
-    const challenge = challengesData.find((c) => c.Id === parseInt(id));
-    return challenge ? { ...challenge } : null;
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        console.error("ApperClient not available");
+        return null;
+      }
+
+      const params = {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "correct_answer_c"}},
+          {"field": {"Name": "difficulty_c"}},
+          {"field": {"Name": "points_c"}},
+          {"field": {"Name": "question_c"}},
+          {"field": {"Name": "skill_c"}},
+          {"field": {"Name": "type_c"}}
+        ]
+      };
+
+      const response = await apperClient.getRecordById('challenge_c', parseInt(id), params);
+
+      if (!response.success) {
+        console.error(response.message);
+        return null;
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching challenge ${id}:`, error?.response?.data?.message || error);
+      return null;
+    }
   },
 
   getByType: async (type) => {
-    await delay(300);
-    return challengesData.filter((c) => c.type === type).map((c) => ({ ...c }));
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        console.error("ApperClient not available");
+        return [];
+      }
+
+      const params = {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "correct_answer_c"}},
+          {"field": {"Name": "difficulty_c"}},
+          {"field": {"Name": "points_c"}},
+          {"field": {"Name": "question_c"}},
+          {"field": {"Name": "skill_c"}},
+          {"field": {"Name": "type_c"}}
+        ],
+        where: [{
+          "FieldName": "type_c",
+          "Operator": "EqualTo",
+          "Values": [type],
+          "Include": true
+        }]
+      };
+
+      const response = await apperClient.fetchRecords('challenge_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching challenges by type:", error?.response?.data?.message || error);
+      return [];
+    }
   },
 
   getBySkillAndDifficulty: async (skill, difficulty) => {
-    await delay(300);
-    return challengesData
-      .filter((c) => c.skill === skill && c.difficulty === parseInt(difficulty))
-      .map((c) => ({ ...c }));
+    try {
+      const apperClient = getApperClient();
+      if (!apperClient) {
+        console.error("ApperClient not available");
+        return [];
+      }
+
+      const params = {
+        fields: [
+          {"field": {"Name": "Name"}},
+          {"field": {"Name": "correct_answer_c"}},
+          {"field": {"Name": "difficulty_c"}},
+          {"field": {"Name": "points_c"}},
+          {"field": {"Name": "question_c"}},
+          {"field": {"Name": "skill_c"}},
+          {"field": {"Name": "type_c"}}
+        ],
+        where: [
+          {
+            "FieldName": "skill_c",
+            "Operator": "EqualTo",
+            "Values": [skill],
+            "Include": true
+          },
+          {
+            "FieldName": "difficulty_c",
+            "Operator": "EqualTo",
+            "Values": [parseInt(difficulty)],
+            "Include": true
+          }
+        ]
+      };
+
+      const response = await apperClient.fetchRecords('challenge_c', params);
+
+      if (!response.success) {
+        console.error(response.message);
+        toast.error(response.message);
+        return [];
+      }
+
+      return response.data || [];
+    } catch (error) {
+      console.error("Error fetching challenges by skill and difficulty:", error?.response?.data?.message || error);
+      return [];
+    }
   },
 
   getRandomByType: async (type, count = 5) => {
-    await delay(300);
-    const filtered = challengesData.filter((c) => c.type === type);
-    const shuffled = [...filtered].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, count).map((c) => ({ ...c }));
+    try {
+      const challenges = await challengeService.getByType(type);
+      
+      if (challenges.length === 0) return [];
+      
+      // Shuffle array and return random selection
+      const shuffled = [...challenges].sort(() => Math.random() - 0.5);
+      return shuffled.slice(0, count);
+    } catch (error) {
+      console.error("Error fetching random challenges by type:", error?.response?.data?.message || error);
+      return [];
+    }
   }
 };
 

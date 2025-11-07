@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
 import progressService from "@/services/api/progressService";
 import Header from "@/components/organisms/Header";
 
-const Layout = () => {
+export default function Layout() {
   const [totalStars, setTotalStars] = useState(0);
+  const { isAuthenticated } = useSelector(state => state.user);
 
-useEffect(() => {
+  useEffect(() => {
     const loadStars = async () => {
-      const progress = await progressService.getCurrentProgress();
-      setTotalStars(progress?.totalStars || 0);
+      if (isAuthenticated) {
+        const progress = await progressService.getCurrentProgress();
+        setTotalStars(progress?.total_stars_c || 0);
+      }
     };
     loadStars();
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -23,5 +27,3 @@ useEffect(() => {
     </div>
   );
 };
-
-export default Layout;

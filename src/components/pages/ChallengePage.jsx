@@ -44,7 +44,7 @@ const loadChallenges = async () => {
         return;
       }
       
-      const data = await challengeService.getRandomByType(subject, 5);
+const data = await challengeService.getRandomByType(subject, 5);
       if (data.length === 0) {
         setError("No challenges available for this subject.");
       } else {
@@ -66,7 +66,7 @@ const handleChallengeComplete = async (stars, correct, completionTime = null) =>
     
     // Calculate time-based bonus for timed mode
     if (isTimedMode && completionTime !== null) {
-      timeBonus = achievementService.calculateBonusStars(completionTime, 30);
+timeBonus = achievementService.calculateBonusStars(completionTime, 30);
       finalStars += timeBonus;
       setBonusStars(prev => prev + timeBonus);
       
@@ -86,15 +86,14 @@ const handleChallengeComplete = async (stars, correct, completionTime = null) =>
     } else {
       setTimeout(async () => {
         const finalTotalStars = totalStars + finalStars;
-        await progressService.updateStars(finalTotalStars);
-        
+await progressService.updateStars(finalTotalStars);
         const duration = Math.floor((Date.now() - sessionStart) / 1000);
         const accuracy = Math.round(((correctAnswers + (correct ? 1 : 0)) / challenges.length) * 100);
         const averageTime = isTimedMode && challengeTimes.length > 0 
           ? [...challengeTimes, completionTime].reduce((a, b) => a + b, 0) / (challengeTimes.length + 1)
           : null;
         
-        await sessionService.create({
+await sessionService.create({
           subject,
           challengesCompleted: challenges.length,
           starsEarned: finalTotalStars,
@@ -107,12 +106,12 @@ const handleChallengeComplete = async (stars, correct, completionTime = null) =>
 
         // Check for new achievements
         if (isTimedMode) {
-          const sessionData = {
+const sessionData = {
             averageTime,
             accuracy,
             isTimed: true
           };
-          const newAchievements = await achievementService.checkAchievements(sessionData);
+const newAchievements = await achievementService.checkAchievements(sessionData);
           setAchievements(newAchievements);
           
           if (newAchievements.length > 0) {
